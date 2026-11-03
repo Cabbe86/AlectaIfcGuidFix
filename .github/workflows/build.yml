@@ -1,0 +1,46 @@
+name: Build Revit Add-in (2024, 2025 & 2026)
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+  workflow_dispatch:
+
+jobs:
+  build:
+    name: Build for Revit ${{ matrix.revit_version }}
+    runs-on: windows-latest
+
+    strategy:
+      fail-fast: false
+      matrix:
+        revit_version: ['2024', '2025', '2026']
+
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v4
+
+    - name: Setup .NET 8 SDK
+      uses: actions/setup-dotnet@v4
+      with:
+        dotnet-version: 8.0.x
+
+    - name: Restore dependencies
+      run: dotnet restore src/AlectaIfcGuidFix/AlectaIfcGuidFix.csproj /p:RevitVersion=${{ matrix.revit_version }}
+
+    - name: Build Add-in (Release)
+      run: dotnet build src/AlectaIfcGuidFix/AlectaIfcGuidFix.csproj -c Release /p:RevitVersion=${{ matrix.revit_version }} --no-restore
+
+    - name: Package installer files
+      shell: bash
+      run: |
+        mkdir -p output/Revit${{ matrix.revit_version }}
+        cp src/AlectaIfcGuidFix/bin/Release/net8.0-windows/AlectaIfcGuidFix_${{ matrix.revit_version }}.dll output/Revit${{ matrix.revit_version }}/AlectaIfcGuidFix.dll
+        cp src/AlectaIfcGuidFix/AlectaIfcGuidFix.addin output/Revit${{ matrix.revit_version }}/AlectaIfcGuidFix.addin
+
+    - name: Upload build artifact
+      uses: actions/upload-artifact@v4
+      with:
+        name: AlectaIfcGuidFix-Revit-${{ matrix.revit_version }}
+        path: output/Revit${{ matrix.revit_version }}
