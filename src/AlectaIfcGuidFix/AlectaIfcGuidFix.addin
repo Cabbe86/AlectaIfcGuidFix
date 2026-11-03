@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RevitAddIns>
+  <AddIn Type="Application">
+    <Name>Alecta IFC Tools</Name>
+    <Assembly>AlectaIfcGuidFix.dll</Assembly>
+    <FullClassName>Alecta.Revit.App</FullClassName>
+    <ClientId>A5B81C92-4D3E-4B78-9F12-8C31D8F1902E</ClientId>
+    <VendorId>ALECTA</VendorId>
+    <VendorDescription>Alecta IFC Tools</VendorDescription>
+  </AddIn>
+</RevitAddIns>
